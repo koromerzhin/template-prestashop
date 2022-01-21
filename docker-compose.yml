@@ -1,0 +1,64 @@
+version: "3.4"
+
+networks:
+  proxylampy:
+    external: true
+  serverlampy:
+    external: true
+  net:
+    driver: overlay
+    attachable: true
+
+volumes:
+  mariadb_data:
+
+services:
+  phpfpmexec:
+    image: koromerzhin/phpfpm:8.0.9
+    command: sh -c "composer install"
+    volumes:
+      - ${PWD}/apps:/var/www/
+      - ${PWD}/conf/httpd.conf:/usr/local/apache2/conf/httpd.conf
+    networks:
+      - serverlampy
+    depends_on:
+      - mariadb
+      - mercure
+      - mailhog
+      - redis
+    deploy:
+      restart_policy:
+        condition: none
+      labels:
+        - "traefik.enable=false"
+  apache:
+    image: httpd:2.4.46
+    depends_on:
+      - phpfpm
+    volumes:
+      - ${PWD}/apps:/var/www/
+      - ${PWD}/conf/httpd.conf:/usr/local/apache2/conf/httpd.conf
+    networks:
+      - net
+      - proxylampy
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.prestashop.rule=HostRegexp(`prestashop.traefik.me`, `prestashop.{ip:.*}.traefik.me`)"
+        - "traefik.http.services.prestashop.loadbalancer.server.port=80"
+  phpfpm:
+    image: koromerzhin/phpfpm:8.0.9
+    depends_on:
+      - mariadb
+      - mercure
+      - mailhog
+      - redis
+    volumes:
+      - ${PWD}/apps:/var/www/
+      - ${PWD}/conf/httpd.conf:/usr/local/apache2/conf/httpd.conf
+    networks:
+      - net
+      - serverlampy
+    deploy:
+      labels:
+        - "traefik.enable=false"
