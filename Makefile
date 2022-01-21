@@ -17,17 +17,11 @@ SYMFONY_EXEC := ${DOCKER_EXECPHP} symfony console
 COMPOSER_EXEC := ${DOCKER_EXECPHP} symfony composer
 PHP_EXEC := ${DOCKER_EXECPHP} php
 
-apps/.env: apps/.env.dist ## Install .env
-	@cp apps/.env.dist apps/.env
-
-apps/phploc.phar:
-	$(DOCKER_EXECPHP) wget https://phar.phpunit.de/phploc-7.0.2.phar -O phploc.phar
-
-apps/phpmd.phar:
-	$(DOCKER_EXECPHP) wget https://github.com/phpmd/phpmd/releases/download/2.10.2/phpmd.phar
-
-assets: isdocker
-	${SYMFONY_EXEC} assets:install public --symlink --relative
+apps:
+	wget https://github.com/PrestaShop/PrestaShop/archive/refs/tags/1.7.8.2.zip -O apps.zip
+	unzip apps.zip
+	mv PrestaShop-1.7.8.2 apps
+	rm apps.zip
 
 .PHONY: bdd
 bdd: isdocker ### Scripts for BDD
@@ -127,7 +121,7 @@ else
 	)
 endif
 
-linter: node_modules isdocker apps/phploc.phar apps/phpmd.phar ### Scripts Linter
+linter: node_modules isdocker ### Scripts Linter
 ifeq ($(COMMANDS_ARGS),all)
 	@make linter eslint -i
 	@make linter twig -i
