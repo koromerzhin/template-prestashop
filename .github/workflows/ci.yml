@@ -12,6 +12,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: recursive
+      - name: Download apps
+        run: make apps
       - name: Cache npm packages
         id: npm-cache
         uses: actions/cache@v2
