@@ -20,10 +20,7 @@
     "url": "https://github.com/koromerzhin/template-github/issues"
   },
   "homepage": "https://github.com/koromerzhin/template-github#readme",
-  "devDependencies": {
-    "generate-changelog": "1.8.0"
-  },
   "dependencies": {
-    "koromerzhin-dependencies": "^1.1.1"
+    "koromerzhin-dependencies": "^1.3.0"
   }
 }
