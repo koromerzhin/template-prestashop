@@ -44,7 +44,9 @@ services:
     deploy:
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.prestashop.rule=HostRegexp(`prestashop.traefik.me`, `prestashop.{ip:.*}.traefik.me`)"
+        - "traefik.http.routers.prestashop.rule=Host(`prestashop.traefik.me`)"
+        - "traefik.http.routers.prestashop-tls.tls.domains[0].main=prestashop.traefik.me"
+        - "traefik.http.routers.prestashop.tls=true"
         - "traefik.http.services.prestashop.loadbalancer.server.port=80"
   phpfpm:
     image: koromerzhin/phpfpm:7.4.12
