@@ -20,6 +20,14 @@ Software:
 - make
 - npm
 
+## Download
+
+```sh
+git clone git@github.com:koromerzhin/template-prestashop.git template-prestashop
+cd template-prestashop
+git submodule update --init
+```
+
 ## Install
 
 ```sh
